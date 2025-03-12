@@ -1,0 +1,44 @@
+##############---COMPILACIÓN Y EJECUCIÓN---##############
+El software se puede compilar con el archivo Makefile proporcionado o se puede compilar y ejecutar a la vez con el script (script.sh).
+Dicho script ejecutará el comando de make para compilar todos los archivos y generar el ejecutable. Posteriormente, ejecutará el software.
+Para ejecutar el script se le ha de pasar el archivo concurrentSum.go por parámetros con la opción -f. Además, se deberá especificar una opción de ejecución.
+Las posibilidades de ejecución son: 0 para ejecutar el programa de manera simple y 1 para ejecutarlo con la herramienta valgrind para evaluar la eficiencia de memoria del software.
+Ejemplo:
+./script.sh -f concurrentSum.go 0
+
+Tipos de ejecución:
+(0) ./ejecutable -f concurrentSum.go
+(1) valgrind --leak-check=full --track-origins=yes -s ./ejecutable -f concurrentSum.go
+
+##############---MAIN---##############
+El fichero principal del programa, se divide en 3 partes. Una de inicialización, otra de la ejecución del análisis y la final de liberación de la memoria.
+En la parte de inicialización, se inicializa la tabla de símbolos y se abre el archivo en el sistema de entrada.
+La ejecución comienza al iniciar el bucle del productor-consumidor, ejecutando la función del analizador sintáctico.
+La liberación se basa en la limpieza de la tabla de símbolos, ya que el resto de la memoria se fue eliminando durante el análisis tras dejar de necesitarse.
+
+##############---TABLA DE SÍMBOLOS---##############
+Los ficheros TS recogen las funcionalidades de la tabla de símbolos que utiliza el analizador léxico para determinar el componente léxico de una cadena que cumple el patrón de identificadores y palabras reservadas, ya que estos componentes léxicos cumplen el mismo patrón.
+
+##############---ANALIZADOR SINTÁCTICO---##############
+El analizador sintáctico comienza el bucle de peticiones al analizador léxico. Este bucle consiste en la petición de las parejas componente léxico y lexema al analizador léxico y la respectiva recepción e impresión de estos elementos.
+Desde el analizador sintáctico se libera la memoria de las cadenas de carácteres reservadas en el análisis, a excepción de los lexemas de los identificadores que se insertan en la tabla de símbolos.
+
+##############---ANALIZADOR LÉXICO---##############
+El analizador léxico se encarga de generar las parejas de componentes léxicos y lexemas para entregarlas al analizador sintáctico.
+Se compone de un conjunto de funciones que actúan como los autómatas que reconocen los lexemas del lenguaje go.
+Para la recepción de los caracteres se colabora con el sistema de entrada para recuperar los caracteres en cada momento.
+
+##############---SISTEMA DE ENTRADA---##############
+El sistema de entrada está construído usando el método del doble centinela, usando un solo bloque físico de memoria que está dividido en dos bloques lógicos, siguiendo las características del método centinela.
+El tamaño del bloque físico está establecido con una constante definida en la parte superior del fichero, el valor predeterminado es 62 porque sumando los bytes destinados a los EOF de los bloques dan un total de 64 bytes favoreciendo a la eficiencia del programa al ser un bloque memoria al completo.
+Se puede modificar el tamaño de esta constante entre ejecuciones, pero su valor siempre debe ser par, ya que si se especifica un número impar, los bloques no serán uniformes.
+
+##############---ERRORES---##############
+Los ficheros de errores concentran la funcionalidad para poder imprimir por pantalla que ha ocurrido algún tipo de error.
+
+##############---DEFINICIONES---##############
+El fichero de definiciones.h recoge todas las definiciones de las relaciones entre tipo de componente léxico y el valor de este.
+
+##############---FICHEROS DE LA TABLA HASH---##############
+Los ficheros de lista y tabla_hash_encadenamiento son los ficheros que contienen todas las funcionalidades de la estructura de datos escogida, siendo está una tabla hash con listas enlazadas y que utiliza una función hash de suma ponderada del valor ASCII de los caracteres.
+
